@@ -2,8 +2,6 @@
 require "date"
 require 'optparse'
 
-# ./cal.rb で実行できるようにする
-
 # 今日の日付を取得
 today = Date.today
 today_year = today.year
