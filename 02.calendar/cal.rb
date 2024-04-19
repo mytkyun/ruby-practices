@@ -10,13 +10,8 @@ month = today.month
 # コマンドラインで指定があった場合の分岐
 params = ARGV.getopts("y:", "m:")
 
-if params["y"] != nil 
-  year = params["y"].to_i
-end
-
-if params["m"] != nil
-  month = params["m"].to_i
-end
+year = params["y"].to_i if params["y"]
+month = params["m"].to_i if params["m"]
 
 # 月の日数の取得、初日の曜日取得
 days = Date.new(year, month, -1).day
@@ -31,12 +26,6 @@ print "   " * weekday_1st
 
 # 日付を表示
 (1..days).each do |n|
-  if n == 0
-    printf("%2d ", n)
-  elsif n % 7 == 6
-    printf("%2d ", n)
-    puts ""
-  else
-    printf("%2d ", n)
-  end
+  printf("%2d ", n)
+  puts "" if n % 7 == 6
 end
