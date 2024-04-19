@@ -7,7 +7,7 @@ today = Date.today
 today_year = today.year
 today_month = today.month
 
-# コマンドラインで入力された内容を判定
+# コマンドラインで入力された内容をもとに年月を指定
 params = ARGV.getopts("y:", "m:")
 
 if params["y"] == nil
@@ -28,38 +28,25 @@ end_of_month = Date.new(year, month, -1).day
 # 月の初日の曜日を取得する
 weekday_1st = Date.new(year, month, 1).wday
 
-# タイトル
+# ヘッダー
 puts "#{month}月 #{year}".center(20)
-
-# 曜日一覧
-day_of_week = ["日", "月", "火", "水", "木", "金", "土"]
-puts day_of_week.join(" ")
+puts "日 月 火 水 木 金 土"
 
 # 1週目の空白を表示する
 weekday_1st.times do
   print "   "
 end
 
-# 1週目の日付表示
-wday_1st_week = 7 - weekday_1st
-wday_1st_week.times do |n|
-  printf("%2d", n + 1) 
-  print " "
-end
-puts " "
 
 # 2週目以降の日付表示
 end_of_month.times do |n|
-  break if n == end_of_month - wday_1st_week
-  if n  == 0
-    printf("%2d", n + 1 + wday_1st_week)
-    print " "
-  elsif n % 7 == 6
-    printf("%2d", n + 1 + wday_1st_week)
-    print " "
-    puts " "
+  break if n == end_of_month
+  if n + 1  == 0
+    printf("%2d ", n + 1)
+  elsif (n + 1) % 7 == 6
+    printf("%2d ", n + 1)
+    puts ""
   else
-    printf("%2d", n + 1 + wday_1st_week)
-    print " "
+    printf("%2d ", n + 1)
   end
 end
