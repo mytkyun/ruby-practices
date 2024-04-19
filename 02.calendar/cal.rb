@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require "date"
-require 'optparse'
+require "optparse"
 
 # 今日の日付を取得
 today = Date.today
@@ -8,22 +8,18 @@ today_year = today.year
 today_month = today.month
 
 # コマンドラインで入力された内容を判定
-opt = OptionParser.new
+params = ARGV.getopts("y:", "m:")
 
-opt.on('-y') {|v| v }
-opt.on('-m') {|v| v }
-
-opt.parse!(ARGV)
-
-if ARGV.size == 1
+if params["y"] == nil
   year = today_year
-  month = ARGV[0].to_i
-elsif ARGV.size == 2
-  year = ARGV[0].to_i
-  month = ARGV[1].to_i
-else
-  year = today_year
+else 
+  year = params["y"].to_i
+end
+
+if params["m"] == nil
   month = today_month
+else 
+  month = params["m"].to_i
 end
 
 # 月のはじまりと終わり
