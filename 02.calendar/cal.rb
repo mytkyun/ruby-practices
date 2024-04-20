@@ -2,16 +2,12 @@
 require "date"
 require "optparse"
 
-# 今日の日付を取得(デフォルト値の設定)
+# 年月の設定
 today = Date.today
-year = today.year
-month = today.month
-
-# コマンドラインで指定があった場合の分岐
 params = ARGV.getopts("y:", "m:")
 
-year = params["y"].to_i if params["y"]
-month = params["m"].to_i if params["m"]
+year = params["y"]&.to_i || today.year
+month = params["m"]&.to_i || today.month
 
 # 月の日数の取得、初日の曜日取得
 days = Date.new(year, month, -1).day
@@ -29,3 +25,4 @@ print "   " * weekday_1st
   printf("%2d ", n)
   puts "" if n % 7 == 6
 end
+puts ""
