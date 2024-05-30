@@ -20,16 +20,14 @@ end
 
 point = 0
 frames.each.with_index do |frame, i|
-  point += if frame.sum == 10 && i == 9 # 10フレーム目がスペア・ストライクの場合
-             frame.sum
-           elsif frame[0] == 10 && shots[(i + 1) * 2] == 10 && i < 9 # ストライクの次がストライクの場合
-             frame.sum + shots[(i + 1) * 2] + shots[(i + 2) * 2]
-           elsif frame[0] == 10 && i < 9 # 上記以外のストライクの場合
-             frame.sum + shots[(i + 1) * 2] + shots[(i + 1) * 2 + 1]
-           elsif frame.sum == 10 && i < 9 # スペアの場合
-             frame.sum + shots[(i + 1) * 2]
-           else
-             frame.sum
-           end
+  point += frame.sum
+  next if frame.sum != 10 || i >= 9
+  point += if frame[0] == 10 && shots[(i + 1) * 2] == 10 && i < 9 # ストライクの次がストライクの場合
+              shots[(i + 1) * 2] + shots[(i + 2) * 2]
+            elsif frame[0] == 10 && i < 9 # 上記以外のストライクの場合
+              shots[(i + 1) * 2] + shots[(i + 1) * 2 + 1]
+            elsif frame.sum == 10 && i < 9 # スペアの場合
+              shots[(i + 1) * 2]
+            end
 end
 puts point
