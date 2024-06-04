@@ -24,12 +24,7 @@ frames.each.with_index do |frame, i|
   next if frame.sum != 10 || i >= 9
 
   point += shots[(i + 1) * 2]
-  point += if frame[0] == 10 && shots[(i + 1) * 2] == 10 # ストライクの次がストライクの場合
-             shots[(i + 2) * 2]
-           elsif frame[0] == 10 # 上記以外のストライクの場合
-             shots[(i + 1) * 2 + 1]
-           else
-             next
-           end
+  point += shots[(i + 2) * 2] if frame[0] == 10 && shots[(i + 1) * 2] == 10 # ストライクの次がストライクの場合
+  point += shots[(i + 1) * 2 + 1] if frame[0] == 10 # 上記以外のストライクの場合
 end
 puts point
