@@ -3,7 +3,7 @@
 def sorted_filenames
   filenames = []
   Dir.foreach(Dir.getwd) do |filename|
-    next if filename =~ /^\./
+    next if /^\./.match?(filename)
 
     filenames << filename
   end
@@ -11,11 +11,11 @@ def sorted_filenames
 end
 
 def calc_row(length, col)
-  length / col + (length % col == zero ? 0 : 1)
+  length / col + ((length % col).zero? ? 0 : 1)
 end
 
 def calc_width(names)
-  names.sort_by { |name| name.length }.reverse[0].length + 5
+  names.sort_by(&:length).reverse[0].length + 5
 end
 
 def view_filename(col)
@@ -24,8 +24,7 @@ def view_filename(col)
   row = calc_row(filenames.length, col)
   row.times do |n|
     col.times do |x|
-      next if filenames[row * x + n] <= filenames.length
-
+      next if filenames[row * x + n] == nil
       print filenames[row * x + n].ljust(width)
     end
     puts
