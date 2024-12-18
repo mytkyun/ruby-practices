@@ -25,6 +25,7 @@ def view_filename(col)
   row.times do |n|
     col.times do |x|
       next if filenames[row * x + n] == nil
+
       print filenames[row * x + n].ljust(width)
     end
     puts
