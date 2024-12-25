@@ -7,7 +7,7 @@ def sorted_filenames
 
     filenames << filename
   end
-  filenames.sort!
+  filenames.sort
 end
 
 def calc_row(length, col)
@@ -18,7 +18,7 @@ def calc_width(names)
   names.sort_by(&:length).reverse[0].length + 5
 end
 
-def view_filename(col)
+def show_filenames(col)
   filenames = sorted_filenames
   width = calc_width(filenames)
   row = calc_row(filenames.length, col)
@@ -32,4 +32,4 @@ def view_filename(col)
   end
 end
 
-view_filename(3)
+show_filenames(3)
