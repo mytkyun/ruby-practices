@@ -15,7 +15,7 @@ def calc_row(length, col)
 end
 
 def calc_width(names)
-  names.sort_by(&:length).reverse[0].length + 5
+  names.max.length + 5
 end
 
 def show_filenames(col)
@@ -32,4 +32,5 @@ def show_filenames(col)
   end
 end
 
-show_filenames(3)
+columns = 3
+show_filenames(columns)
