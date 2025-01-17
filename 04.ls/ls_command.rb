@@ -15,7 +15,10 @@ def calc_row(length, col)
 end
 
 def calc_width(names)
-  names.max.length + 5
+  if names.length == 0
+  else
+    names.max.length + 5
+  end
 end
 
 def show_filenames(col)
