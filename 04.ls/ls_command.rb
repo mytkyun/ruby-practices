@@ -14,7 +14,7 @@ end
 
 def calc_width(names)
   if names.empty?
-    puts
+    print
   else
     names.max.length + 5
   end
