@@ -1,11 +1,8 @@
 # frozen_string_literal: true
 
 def sorted_filenames
-  filenames = []
-  Dir.foreach(Dir.getwd) do |filename|
-    filenames << filename
-  end
-  filenames.sort.reject { |i| i =~ /^\./ }
+  filenames = Dir.foreach(Dir.getwd).to_a
+  filenames.sort.reject { |i| i.start_with?('.') }
 end
 
 def calc_row(length, col)
@@ -15,7 +12,7 @@ end
 def calc_width(names)
   return if names.empty?
 
-  names.max.length + 5
+  names.max_by(&:length).length + 5
 end
 
 def show_filenames(col)
