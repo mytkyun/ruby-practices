@@ -6,7 +6,7 @@ def sorted_filenames
 end
 
 def calc_row(length, col)
-  length / col + ((length % col).zero? ? 0 : 1)
+  length.ceildiv(col)
 end
 
 def calc_width(names)
