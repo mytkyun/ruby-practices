@@ -1,8 +1,22 @@
 # frozen_string_literal: true
 
-def sorted_filenames
+require 'optparse'
+
+def set_options
+  options = {}
+  opts = OptionParser.new
+  opts.on('-a') { options[:a] = true }
+  opts.parse(ARGV)
+  options
+end
+
+def sorted_filenames(options)
   filenames = Dir.foreach(Dir.getwd).to_a
-  filenames.sort.reject { |i| i.start_with?('.') }
+  if options[:a] == true
+    filenames.sort
+  else
+    filenames.sort.reject { |i| i.start_with?('.') }
+  end
 end
 
 def calc_row(length, col)
@@ -16,7 +30,8 @@ def calc_width(names)
 end
 
 def show_filenames(col)
-  filenames = sorted_filenames
+  options = set_options
+  filenames = sorted_filenames(options)
   width = calc_width(filenames)
   row = calc_row(filenames.length, col)
   row.times do |n|
