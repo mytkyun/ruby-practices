@@ -2,7 +2,7 @@
 
 require 'optparse'
 
-def set_options
+def fetch_options
   options = {}
   opts = OptionParser.new
   opts.on('-a') { options[:a] = true }
@@ -11,12 +11,9 @@ def set_options
 end
 
 def sorted_filenames(options)
-  filenames = Dir.foreach(Dir.getwd).to_a
-  if options[:a] == true
-    filenames.sort
-  else
-    filenames.sort.reject { |i| i.start_with?('.') }
-  end
+  filenames = Dir.foreach(Dir.getwd).to_a.sort
+  filenames.reject! { |i| i.start_with?('.') } if options.empty?
+  filenames
 end
 
 def calc_row(length, col)
@@ -30,7 +27,7 @@ def calc_width(names)
 end
 
 def show_filenames(col)
-  options = set_options
+  options = fetch_options
   filenames = sorted_filenames(options)
   width = calc_width(filenames)
   row = calc_row(filenames.length, col)
