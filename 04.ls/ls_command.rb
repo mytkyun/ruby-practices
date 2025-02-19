@@ -12,7 +12,7 @@ end
 
 def sorted_filenames(options)
   filenames = Dir.foreach(Dir.getwd).to_a.sort
-  filenames.reject! { |i| i.start_with?('.') } if options.empty?
+  filenames.reject! { |i| i.start_with?('.') } unless options[:a]
   filenames
 end
 
