@@ -6,6 +6,7 @@ def fetch_options
   options = {}
   opts = OptionParser.new
   opts.on('-a') { options[:a] = true }
+  opts.on('-r') { options[:r] = true }
   opts.parse(ARGV)
   options
 end
@@ -13,6 +14,7 @@ end
 def sorted_filenames(options)
   filenames = Dir.foreach(Dir.getwd).to_a.sort
   filenames.reject! { |i| i.start_with?('.') } unless options[:a]
+  filenames.reverse! if options[:r] == true
   filenames
 end
 
