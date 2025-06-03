@@ -38,13 +38,12 @@ def l_option
   filenames.each do |n|
     stat = File.stat(n)
     stat_mode = stat.mode.to_s(8)
-    stat_mode = '0' + stat_mode if stat_mode.size == 5
+    stat_mode = "0 #{stat_mode}" if stat_mode.size == 5
     user_permissions = filemode[stat_mode.slice(3)]
     if user_permissions.slice(2) == 'x' && filemode[stat_mode.slice(3)] == '1'
       user_permissions[2] = 't'
     elsif user_permissions.slice(2) == '-' && filemode[stat_mode.slice(3)] == '1'
       user_permissions[2] = 'T'
-    else
     end
 
     group_permissions = filemode[stat_mode.slice(4)]
@@ -52,7 +51,6 @@ def l_option
       group_permissions[2] = 's'
     elsif group_permissions.slice(2) == '-' && filemode[stat_mode.slice(3)] == '2'
       group_permissions[2] = 'S'
-    else
     end
 
     other_permissions = filemode[stat_mode.slice(5)]
@@ -60,7 +58,6 @@ def l_option
       other_permissions[2] = 's'
     elsif other_permissions.slice(2) == '-' && filemode[stat_mode.slice(3)] == '4'
       other_permissions[2] = 'S'
-    else
     end
 
     perimission = filetype[stat_mode.slice(0..1)] + user_permissions + group_permissions + other_permissions
@@ -80,7 +77,7 @@ def l_option
     blocks << stat.blocks
   end
 
-  puts 'total ' + blocks.sum.to_s
+  puts "total #{blocks.sum}"
 
   nlinks_to_i = nlinks.map(&:to_s)
 
