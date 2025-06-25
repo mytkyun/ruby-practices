@@ -57,11 +57,6 @@ def other_permission(filemodes, stat_mode)
   other_permission
 end
 
-def fetch_year
-  today = Date.today
-  year = today.year
-end
-
 filenames = sorted_filenames(options)
 filestats = []
 blocks = []
@@ -82,7 +77,7 @@ filenames.each do |filename|
   filestat << Etc.getgrgid(stat.gid).name
   filestat << stat.size.to_s
   mtime = stat.mtime
-  year = fetch_year
+  year = Date.today.year
   filestat << if mtime.year == year
                 mtime.strftime('%_m %_d %R')
               else
