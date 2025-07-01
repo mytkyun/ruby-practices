@@ -79,9 +79,9 @@ filenames.each do |filename|
   mtime = stat.mtime
   year = Date.today.year
   filestat << if mtime.year == year
-                mtime.strftime('%_m %_d %R')
+                mtime.strftime('%_b %_d %R')
               else
-                mtime.strftime('%_m %_d  %Y')
+                mtime.strftime('%_b %_d  %Y')
               end
   blocks << stat.blocks
   filestats << filestat
