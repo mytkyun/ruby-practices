@@ -64,8 +64,7 @@ blocks = []
 filenames.each do |filename|
   filestat = []
   stat = File.stat(filename)
-  stat_mode = stat.mode.to_s(8)
-  stat_mode = "0#{stat_mode}" if stat_mode.size == 5
+  stat_mode = stat.mode.to_s(8).rjust(6, '0')
   filetype = filetypes[stat_mode.slice(0..1)]
   user_perm = user_permission(filemodes, stat_mode)
   group_perm = group_permission(filemodes, stat_mode)
