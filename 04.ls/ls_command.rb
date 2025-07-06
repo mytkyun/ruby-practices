@@ -27,31 +27,31 @@ return unless options[:l]
 FILETYPES = { '01' => 'p',  '02' => 'c', '04' => 'd', '06' => 'b', '10' => '-', '12' => 'l', '14' => 's' }.freeze
 FILEMODES = { '0' => '---', '1' => '--x', '2' => '-w-', '3' => '-wx', '4' => 'r--', '5' => 'r-x', '6' => 'rw-', '7' => 'rwx' }.freeze
 
-def user_permission(stat_mode, filemodes = FILEMODES)
-  user_permission = filemodes[stat_mode.slice(3)]
-  if user_permission.slice(2) == 'x' && filemodes[stat_mode.slice(3)] == '1'
+def user_permission(stat_mode)
+  user_permission = FILEMODES[stat_mode.slice(3)]
+  if user_permission.slice(2) == 'x' && FILEMODES[stat_mode.slice(3)] == '1'
     user_permission[2] = 't'
-  elsif user_permission.slice(2) == '-' && filemodes[stat_mode.slice(3)] == '1'
+  elsif user_permission.slice(2) == '-' && FILEMODES[stat_mode.slice(3)] == '1'
     user_permission[2] = 'T'
   end
   user_permission
 end
 
-def group_permission(stat_mode, filemodes = FILEMODES)
-  group_permission = filemodes[stat_mode.slice(4)]
-  if group_permission.slice(2) == 'x' && filemodes[stat_mode.slice(3)] == '2'
+def group_permission(stat_mode)
+  group_permission = FILEMODES[stat_mode.slice(4)]
+  if group_permission.slice(2) == 'x' && FILEMODES[stat_mode.slice(3)] == '2'
     group_permission[2] = 's'
-  elsif group_permission.slice(2) == '-' && filemodes[stat_mode.slice(3)] == '2'
+  elsif group_permission.slice(2) == '-' && FILEMODES[stat_mode.slice(3)] == '2'
     group_permission[2] = 'S'
   end
   group_permission
 end
 
-def other_permission(stat_mode, filemodes = FILEMODES)
-  other_permission = filemodes[stat_mode.slice(5)]
-  if other_permission.slice(2) == 'x' && filemodes[stat_mode.slice(3)] == '4'
+def other_permission(stat_mode)
+  other_permission = FILEMODES[stat_mode.slice(5)]
+  if other_permission.slice(2) == 'x' && FILEMODES[stat_mode.slice(3)] == '4'
     other_permission[2] = 's'
-  elsif other_permission.slice(2) == '-' && filemodes[stat_mode.slice(3)] == '4'
+  elsif other_permission.slice(2) == '-' && FILEMODES[stat_mode.slice(3)] == '4'
     other_permission[2] = 'S'
   end
   other_permission
@@ -66,9 +66,9 @@ filenames.each do |filename|
   stat = File.stat(filename)
   stat_mode = stat.mode.to_s(8).rjust(6, '0')
   filetype = FILETYPES[stat_mode.slice(0..1)]
-  user_perm = user_permission(stat_mode, filemodes = FILEMODES)
-  group_perm = group_permission(stat_mode, filemodes = FILEMODES)
-  other_perm = other_permission(stat_mode, filemodes = FILEMODES)
+  user_perm = user_permission(stat_mode)
+  group_perm = group_permission(stat_mode)
+  other_perm = other_permission(stat_mode)
   permission = "#{filetype}#{user_perm}#{group_perm}#{other_perm}"
   filestat << permission
   filestat << stat.nlink.to_s
@@ -94,7 +94,6 @@ width_filesize = 0
 
 filestats.each do |x|
   width_permission = x[0].length if x[0].length > width_permission
-  binding.irb
   width_nlink = x[1].length if x[1].length > width_nlink
   width_uid = x[2].length if x[2].length > width_uid
   width_gid = x[3].length if x[3].length > width_gid
