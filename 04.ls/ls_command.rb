@@ -66,9 +66,9 @@ filenames.each do |filename|
   stat = File.stat(filename)
   stat_mode = stat.mode.to_s(8).rjust(6, '0')
   filetype = FILETYPES[stat_mode.slice(0..1)]
-  user_perm = user_permission(FILEMODES, stat_mode)
-  group_perm = group_permission(FILEMODES, stat_mode)
-  other_perm = other_permission(FILEMODES, stat_mode)
+  user_perm = user_permission(stat_mode, filemodes = FILEMODES)
+  group_perm = group_permission(stat_mode, filemodes = FILEMODES)
+  other_perm = other_permission(stat_mode, filemodes = FILEMODES)
   permission = "#{filetype}#{user_perm}#{group_perm}#{other_perm}"
   filestat << permission
   filestat << stat.nlink.to_s
@@ -94,6 +94,7 @@ width_filesize = 0
 
 filestats.each do |x|
   width_permission = x[0].length if x[0].length > width_permission
+  binding.irb
   width_nlink = x[1].length if x[1].length > width_nlink
   width_uid = x[2].length if x[2].length > width_uid
   width_gid = x[3].length if x[3].length > width_gid
