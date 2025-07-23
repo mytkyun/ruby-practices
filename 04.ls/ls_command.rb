@@ -29,23 +29,11 @@ FILEMODES = { '0' => '---', '1' => '--x', '2' => '-w-', '3' => '-wx', '4' => 'r-
 
 def permission(stat_mode)
   user_permission = FILEMODES[stat_mode.slice(3)]
-  if user_permission.slice(2) == 'x' && FILEMODES[stat_mode.slice(3)] == '1'
-    user_permission[2] = 't'
-  elsif user_permission.slice(2) == '-' && FILEMODES[stat_mode.slice(3)] == '1'
-    user_permission[2] = 'T'
-  end
+  user_permission[2] = user_permission[2] == 'x' ? 't' : 'T' if FILEMODES[stat_mode[3]] == '1'
   group_permission = FILEMODES[stat_mode.slice(4)]
-  if group_permission.slice(2) == 'x' && FILEMODES[stat_mode.slice(3)] == '2'
-    group_permission[2] = 's'
-  elsif group_permission.slice(2) == '-' && FILEMODES[stat_mode.slice(3)] == '2'
-    group_permission[2] = 'S'
-  end
+  group_permission[2] = group_permission[2] == 'x' ? 's' : 'S' if FILEMODES[stat_mode[3]] == '2'
   other_permission = FILEMODES[stat_mode.slice(5)]
-  if other_permission.slice(2) == 'x' && FILEMODES[stat_mode.slice(3)] == '4'
-    other_permission[2] = 's'
-  elsif other_permission.slice(2) == '-' && FILEMODES[stat_mode.slice(3)] == '4'
-    other_permission[2] = 'S'
-  end
+  other_permission[2] = other_permission[2] == 'x' ? 's' : 'S' if FILEMODES[stat_mode[3]] == '4'
   "#{user_permission}#{group_permission}#{other_permission}"
 end
 
