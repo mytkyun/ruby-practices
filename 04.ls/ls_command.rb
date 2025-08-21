@@ -4,6 +4,11 @@ require 'optparse'
 require 'etc'
 require 'date'
 
+COLUMNS = 3
+
+FILETYPES = { '01' => 'p',  '02' => 'c', '04' => 'd', '06' => 'b', '10' => '-', '12' => 'l', '14' => 's' }.freeze
+FILEMODES = { '0' => '---', '1' => '--x', '2' => '-w-', '3' => '-wx', '4' => 'r--', '5' => 'r-x', '6' => 'rw-', '7' => 'rwx' }.freeze
+
 def fetch_options
   options = {}
   opts = OptionParser.new
@@ -40,9 +45,6 @@ def show_filenames
   end
 end
 
-FILETYPES = { '01' => 'p',  '02' => 'c', '04' => 'd', '06' => 'b', '10' => '-', '12' => 'l', '14' => 's' }.freeze
-FILEMODES = { '0' => '---', '1' => '--x', '2' => '-w-', '3' => '-wx', '4' => 'r--', '5' => 'r-x', '6' => 'rw-', '7' => 'rwx' }.freeze
-
 def permission(stat_mode)
   user_permission = FILEMODES[stat_mode.slice(3)]
   user_permission[2] = user_permission[2] == 'x' ? 't' : 'T' if FILEMODES[stat_mode[3]] == '1'
@@ -71,6 +73,7 @@ def filestats(filenames)
     filestat['size'] = stat.size.to_s
     mtime = stat.mtime
     filestat['mtime'] = mtime.strftime(mtime.year == Date.today.year ? '%_b %_d %R' : '%_b %_d  %Y')
+    filestat['filename'] = filename
     blocks << stat.blocks
     filestats << filestat
   end
@@ -99,7 +102,7 @@ end
 
 l_option_width = calc_width_l_option(filestats)
 
-def show_l_option_filenames(filestats, filenames, blocks, l_option_width)
+def show_l_option_filenames(filestats, blocks, l_option_width)
   puts "total #{blocks.sum}"
   filestats.each do |filestat|
     print filestat['permission'], '  '
@@ -108,14 +111,12 @@ def show_l_option_filenames(filestats, filenames, blocks, l_option_width)
     print filestat['gid'].ljust(l_option_width[:width_gid]), '  '
     print filestat['size'].rjust(l_option_width[:width_filesize]), ' '
     print filestat['mtime'], ' '
-    puts filenames[filestats.index(filestat)]
+    puts filestat['filename']
   end
 end
 
-COLUMNS = 3
-
 if options[:l]
-  show_l_option_filenames(filestats, filenames, blocks, l_option_width)
+  show_l_option_filenames(filestats, blocks, l_option_width)
 else
   show_filenames
 end
