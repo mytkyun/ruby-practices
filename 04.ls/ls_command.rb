@@ -44,35 +44,22 @@ def show_filenames
   end
 end
 
-# valueは0~7の文字のいずれかが入ることを想定している
-# execute_permissionはxのときは権限がないときに-を返す
 def generate_permission(value, execute_permission)
-  # e.g. value = '4'の場合
-  # '4'.to_i => 4
-  # 4.to_s(2) => '10'
-  # '10'.rjust(3, '0') => '010'
-  # '010'.each_char.map.with_indexとなる
   value.to_i.to_s(2).rjust(3, '0').each_char.map.with_index do |char, index|
-    # sticky bitが影響するのはindexが2のときだけなので2以外のときにcharが'0'なら問答無用で'-'となる
     next '-' if index != 2 && char == '0'
-
     next 'r' if index.zero?
     next 'w' if index == 1
 
-    # execute_permissionとunexecute_permissionの対を'x' => '-', 's' => 'S', 't' => 'T'のいずれかに決定する一行
     unexecute_permission = execute_permission == 'x' ? '-' : execute_permission.upcase
-
     char == '0' ? unexecute_permission : execute_permission
-  end.join # ['r', '-', 'x']の形で返ってくるので最後にjoinして 'r-x'という文字列にする
+  end.join
 end
 
 def permission(stat_mode)
   sticky_bit = stat_mode[2]
-
   user_permission = generate_permission(stat_mode.slice(3), sticky_bit == '4' ? 's' : 'x')
   group_permission = generate_permission(stat_mode.slice(4), sticky_bit == '2' ? 's' : 'x')
   other_permission = generate_permission(stat_mode.slice(5), sticky_bit == '1' ? 't' : 'x')
-
   "#{user_permission}#{group_permission}#{other_permission}"
 end
 
