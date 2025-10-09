@@ -123,6 +123,8 @@ def show_l_option_filenames(filestats, blocks, l_option_width)
   end
 end
 
+return if filenames.empty?
+
 if options[:l]
   show_l_option_filenames(filestats, blocks, l_option_width)
 else
