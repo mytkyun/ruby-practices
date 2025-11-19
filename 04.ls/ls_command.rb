@@ -77,7 +77,7 @@ def filestats(filenames)
       gid: Etc.getgrgid(stat.gid).name,
       size: stat.size.to_s,
       block: stat.blocks.to_i,
-      mtime: mtime.strftime(mtime.year == Date.today.year ? '%_b %_d %R' : '%_b %_d  %Y'),
+      mtime: mtime.strftime(mtime.year == Date.today.year ? '%_m %_d %R' : '%_m %_d  %Y'),
       filename:
     }
   end
