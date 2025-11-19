@@ -56,41 +56,34 @@ def generate_permission(value, execute_permission)
 end
 
 def permission(stat_mode)
-  sticky_bit = stat_mode[2]
-  user_permission = generate_permission(stat_mode.slice(3), sticky_bit == '4' ? 's' : 'x')
-  group_permission = generate_permission(stat_mode.slice(4), sticky_bit == '2' ? 's' : 'x')
-  other_permission = generate_permission(stat_mode.slice(5), sticky_bit == '1' ? 't' : 'x')
+  sticky_bit = stat_mode[2].to_i(8) # 0~7
+  user_permission = generate_permission(stat_mode.slice(3), (sticky_bit & 4).zero? ? 'x' : 's')
+  group_permission = generate_permission(stat_mode.slice(4), (sticky_bit & 2).zero? ? 'x' : 's')
+  other_permission = generate_permission(stat_mode.slice(5), (sticky_bit & 1).zero? ? 'x' : 't')
   "#{user_permission}#{group_permission}#{other_permission}"
 end
 
 filenames = sorted_filenames(options)
 
 def filestats(filenames)
-  filestats = []
-  blocks = []
-  filenames.each do |filename|
-    filestat = {}
+  filenames.map do |filename|
     stat = File.stat(filename)
     stat_mode = stat.mode.to_s(8).rjust(6, '0')
-    filetype = FILETYPES[stat_mode.slice(0..1)]
-    permission = "#{filetype}#{permission(stat_mode)}"
-    filestat['permission'] = permission
-    filestat['nlink'] = stat.nlink.to_s
-    filestat['uid'] = Etc.getpwuid(stat.uid).name
-    filestat['gid'] = Etc.getgrgid(stat.gid).name
-    filestat['size'] = stat.size.to_s
     mtime = stat.mtime
-    filestat['mtime'] = mtime.strftime(mtime.year == Date.today.year ? '%_b %_d %R' : '%_b %_d  %Y')
-    filestat['filename'] = filename
-    blocks << stat.blocks
-    filestats << filestat
+    {
+      permission: "#{FILETYPES[stat_mode.slice(0..1)]}#{permission(stat_mode)}",
+      nlink: stat.nlink.to_s,
+      uid: Etc.getpwuid(stat.uid).name,
+      gid: Etc.getgrgid(stat.gid).name,
+      size: stat.size.to_s,
+      block: stat.blocks.to_i,
+      mtime: mtime.strftime(mtime.year == Date.today.year ? '%_b %_d %R' : '%_b %_d  %Y'),
+      filename:
+    }
   end
-  { filestats:, blocks: }
 end
 
-result_filestats = filestats(filenames)
-filestats = result_filestats[:filestats]
-blocks = result_filestats[:blocks]
+filestats = filestats(filenames)
 
 def calc_width_l_option(filestats)
   width_permission = 0
@@ -99,34 +92,35 @@ def calc_width_l_option(filestats)
   width_gid = 0
   width_filesize = 0
   filestats.each do |filestat|
-    width_permission = [width_permission, filestat['permission'].length].max
-    width_nlink = [width_nlink, filestat['nlink'].length].max
-    width_uid = [width_uid, filestat['uid'].length].max
-    width_gid = [width_gid, filestat['gid'].length].max
-    width_filesize = [width_filesize, filestat['size'].length].max
+    width_permission = [width_permission, filestat[:permission].length].max
+    width_nlink = [width_nlink, filestat[:nlink].length].max
+    width_uid = [width_uid, filestat[:uid].length].max
+    width_gid = [width_gid, filestat[:gid].length].max
+    width_filesize = [width_filesize, filestat[:size].length].max
   end
   { width_permission:, width_nlink:, width_uid:, width_gid:, width_filesize: }
 end
 
 l_option_width = calc_width_l_option(filestats)
 
-def show_l_option_filenames(filestats, blocks, l_option_width)
-  puts "total #{blocks.sum}"
+def show_l_option_filenames(filestats, l_option_width)
+  blocks = filestats.sum { |fs| fs[:block] }
+  puts "total #{blocks}"
   filestats.each do |filestat|
-    print filestat['permission'], '  '
-    print filestat['nlink'].rjust(l_option_width[:width_nlink]), ' '
-    print filestat['uid'].ljust(l_option_width[:width_uid]), '  '
-    print filestat['gid'].ljust(l_option_width[:width_gid]), '  '
-    print filestat['size'].rjust(l_option_width[:width_filesize]), ' '
-    print filestat['mtime'], ' '
-    puts filestat['filename']
+    print filestat[:permission], '  '
+    print filestat[:nlink].rjust(l_option_width[:width_nlink]), ' '
+    print filestat[:uid].ljust(l_option_width[:width_uid]), '  '
+    print filestat[:gid].ljust(l_option_width[:width_gid]), '  '
+    print filestat[:size].rjust(l_option_width[:width_filesize]), ' '
+    print filestat[:mtime], ' '
+    puts filestat[:filename]
   end
 end
 
 return if filenames.empty?
 
 if options[:l]
-  show_l_option_filenames(filestats, blocks, l_option_width)
+  show_l_option_filenames(filestats, l_option_width)
 else
   show_filenames
 end
