@@ -117,9 +117,11 @@ def show_l_option_filenames(filestats, l_option_width)
   end
 end
 
-return if filenames.empty?
-
-if options[:l]
+if filenames.empty? && options[:l]
+  puts 'total 0'
+elsif filenames.empty?
+  return
+elsif options[:l]
   show_l_option_filenames(filestats, l_option_width)
 else
   show_filenames
