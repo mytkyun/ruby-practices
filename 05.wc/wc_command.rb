@@ -5,39 +5,40 @@ require 'optparse'
 def fetch_options
   options = {}
   opts = OptionParser.new
-  opts.on('-l') { |opt| options[:l] = opt }
-  opts.on('-w') { |opt| options[:w] = opt }
-  opts.on('-c') { |opt| options[:c] = opt }
+  opts.on('-l') { options[:l] = true }
+  opts.on('-w') { options[:w] = true }
+  opts.on('-c') { options[:c] = true }
   opts.parse!(ARGV)
-  { options:, ARGV: }
+  { options:, filenames: ARGV }
 end
 
-options = fetch_options
-p options
-
-def open_files
+def word_counts(filename)
   texts = []
-  File.open(ARGV[0], 'r') do |text|
+  File.open(filename, 'r') do |text|
     texts = text.readlines
   end
-  texts
-end
-
-p open_files
-
-def word_counts
-  wc = {
-    l: open_files.length,
-    w: open_files.sum { |line| line.split.length },
-    c: open_files.sum(&:length)
+  {
+    l: texts.length,
+    w: texts.sum { |line| line.split.length },
+    c: texts.sum(&:length)
   }
 end
 
-def results
-  print word_counts[:l].to_s.rjust(8)
-  print word_counts[:w].to_s.rjust(8)
-  print word_counts[:c].to_s.rjust(8), ' '
-  puts ARGV
+def results(options, filenames)
+  filenames.each do |filename|
+    counts = word_counts(filename)
+    if options.empty?
+      print counts[:l].to_s.rjust(8)
+      print counts[:w].to_s.rjust(8)
+      print counts[:c].to_s.rjust(8)
+    else
+      print counts[:l].to_s.rjust(8) if options.key?(:l)
+      print counts[:w].to_s.rjust(8) if options.key?(:w)
+      print counts[:c].to_s.rjust(8) if options.key?(:c)
+    end
+    puts " #{filename}"
+  end
 end
 
-results
+option = fetch_options
+results(option[:options], option[:filenames])
